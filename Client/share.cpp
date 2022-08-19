@@ -14,9 +14,14 @@ string executeshareclient(vector<string> tokens, string clntsckstr, string trcks
     string cmd = tokens[0];
     string fpath = tokens[1];
     string mtpath = tokens[2];
-    //cout<<"Command  : "<<cmd<<endl;
-    //cout<<"File path : "<<fpath<<endl;
-    //cout<<"Mtorrent path : "<<mtpath<<endl;
+    cout << "Command  : " << cmd << endl;
+    cout << "File path : " << fpath << endl;
+    cout << "Mtorrent path : " << mtpath << endl;
+    // srand(time(NULL));
+    /* 產生亂數 */
+    // int x = rand();
+
+    // mtpath += to_string(x);
     char *fp, *tp;
     fp = new char[fpath.length() + 1];
     strcpy(fp, fpath.c_str());
@@ -29,7 +34,7 @@ string executeshareclient(vector<string> tokens, string clntsckstr, string trcks
         writelog("\nError Encounter for creating hash of file in sharing: " + fpath);
         return "-1";
     }
-    writelog("share cmd gets Long Hash : " + filehash); //need to do hash of hash
+    writelog("share cmd gets Long Hash : " + filehash); // need to do hash of hash
     char *longhash = new char[filehash.length() + 1];
     strcpy(longhash, filehash.c_str());
     string shorthash = calHashofchunk(longhash, filehash.length(), 0);

@@ -3,7 +3,9 @@
 ************************************************************************/
 #include "clientheader.h"
 #include "socket.cpp"
-
+#include <fstream>
+#include <time.h>
+std::map<std::string, int> m;
 struct complexData
 {
     char *replydata1, *destpath1, *getcmdmtorrentpath1;
@@ -14,18 +16,55 @@ struct complexData
 
 const char *logpath;
 string clientsocketstr, trackersocket1str, trackersocket2str;
-map<string, string> downloadstatus; //to maintain download status
+map<string, string> downloadstatus; // to maintain download status
 vector<pair<string, string>> clientfilepath;
 
 //***************************************************************************
 // This function is act as leecher to download file from seeders
 //***************************************************************************
-int dofiletransfering(string replydata, string destpath)
+int merge_binary(string destpath)
+{
+    char *d_path = new char[destpath.length() + 20];
+    strcpy(d_path, destpath.c_str());
+    ofstream myfile(d_path, ofstream::binary);
+    cout << "merge binary" << endl;
+    int count_b = 0;
+    string download_file_size = destpath.c_str();
+    download_file_size += "count";
+
+    for (int i = 0; i < m.find(download_file_size)->second; i++)
+    {
+        // myfile.write(buffer2, n);
+        string s = destpath.c_str();
+        string s2;
+        char str[20];
+        sprintf(str, "%d", i); // integer to string
+        std::stringstream ss;
+        ss << str;
+        ss >> s2;
+        s += ".tmp." + s2;
+        std::ifstream fin(s.c_str(), ios_base::in | ifstream::binary);
+        char *buffer2 = new char[m.find(s)->second];
+        if (!fin.is_open())
+        {
+            cout << "errror" << endl;
+        }
+        fin.read(buffer2, m.find(s)->second);
+        fin.close();
+        count_b += m.find(s)->second;
+        // ofstream myfile2(s.c_str(), ofstream::binary);
+        myfile.write(buffer2, m.find(s)->second);
+    }
+    cout << count_b << endl;
+    // cout << count_n << endl;
+    myfile.close();
+}
+int dofiletransfering(string replydata, string destpath, string filesize)
 {
     writelog("dofiletransfering called : " + replydata);
     stringstream check1(replydata);
     string intermediate;
-    //cout<<"reply : "<<replydata<<endl;
+    cout << "reply : " << replydata << endl;
     while (getline(check1, intermediate, '@'))
     {
         stringstream check2(intermediate);
@@ -43,60 +82,259 @@ int dofiletransfering(string replydata, string destpath)
         writelog(clientfilepath[i].first + "--->" + clientfilepath[i].second);
     }
     writelog("****************************************************");
+
     socketclass csocket;
-    //cout<<"socket : "<<clientfilepath[0].first<<endl;
-    csocket.setsocketdata((clientfilepath[0].first));
-    string filepath = clientfilepath[0].second;
+    string filepath;
     int sock = 0;
-    struct sockaddr_in serv_addr;
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    char *d_path = new char[destpath.length() + 1];
+    char *d_path2 = new char[destpath.length() + 1];
+    strcpy(d_path, destpath.c_str());
+    strcpy(d_path2, destpath.c_str());
+
+    char *token = strtok(d_path2, "/");
+    char *last;
+    // loop through the string to extract all other tokens
+    while (token != NULL)
     {
-        printf("\n Socket creation error \n");
-        return -1;
+        // printf(" %s\n", token); // printing each token
+        // if(strtok(NULL, "/"))
+        token = strtok(NULL, "/");
+        if (token)
+            last = token;
     }
-
-    memset(&serv_addr, '0', sizeof(serv_addr));
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(csocket.port);
-
-    //Convert IPv4 and IPv6 addresses from text to binary form
-    if (inet_pton(AF_INET, csocket.ip, &serv_addr.sin_addr) <= 0)
+    printf(" %s\n", last);
+    // cout << token << endl;
+    // printf(" hahah%s\n", token);
+    for (unsigned int i = 0; i < clientfilepath.size(); i++)
     {
-        printf("\nClient File  : Invalid address/ Address not supported \n");
-        return -1;
-    }
+        // char *pch;
+        size_t found = clientfilepath[i].second.find(last);
+        // if (found != string::npos)
+        // {
 
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        printf("\nConnection Failed in Client\n");
-        return -1;
-    }
+        // }
 
+        // pch = strstr(clientfilepath[i].second, last);。
+        if (found != string::npos)
+        {
+            cout << "found at " << found << "\n";
+            sock = 0;
+            cout << "socket : " << clientfilepath[i].first << endl;
+            csocket.setsocketdata((clientfilepath[i].first));
+            filepath = clientfilepath[i].second;
+            struct sockaddr_in serv_addr;
+            if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+            {
+                cout << "trying another source.." << endl;
+                printf("\n Socket creation error \n");
+                continue;
+            }
+
+            memset(&serv_addr, '0', sizeof(serv_addr));
+
+            serv_addr.sin_family = AF_INET;
+            serv_addr.sin_port = htons(csocket.port);
+
+            // Convert IPv4 and IPv6 addresses from text to binary form
+            if (inet_pton(AF_INET, csocket.ip, &serv_addr.sin_addr) <= 0)
+            {
+                printf("\nClient File  : Invalid address/ Address not supported \n");
+                continue;
+            }
+
+            if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+            {
+                printf("\nConnection Failed in Client\n");
+                continue;
+            }
+            break;
+        }
+        else
+
+            continue;
+    }
     writelog("******Connection  established for file transffered !!!");
 
-    char *d_path = new char[destpath.length() + 1];
-    strcpy(d_path, destpath.c_str());
-
     ofstream myfile(d_path, ofstream::binary);
+    cout << d_path << endl;
+    // ofstream myfile2(d_path + "tmp", ofstream::binary);
 
-    //dowloading chunk of data from seeder and write it into a file
+    // dowloading chunk of data from seeder and write it into a file
     char *clientreply = new char[filepath.length() + 1];
     strcpy(clientreply, filepath.c_str());
     send(sock, clientreply, strlen(clientreply), 0);
     int n;
     downloadstatus[destpath] = "D";
+    double keepdownload;
+    // keepdownload = getfileprocess("");
+    // cout << getfileprocess("") << endl;
+    // // cout << getfilesize(filesize) << endl;
+    // const char *pFileName = "result.txt";
+    // FILE *pFile;
+    // pFile = fopen(pFileName, "w");
+    // if (NULL == pFile)
+    // {
+    //     printf("error");
+    //     // return;
+    // }
+    // else
+    // {
+    //     char answer;
+    //     printf("\nWould you like to play? Enter y or n: \n");
+    //     // fclose(pFile);
+    // }
+
+    double size = getfilesize(filesize);
+    // size = size * 1.2;
+    // std::map<std::string, int> m;
+
+    float progress = 0.0;
+    int count = 0;
+    int count_n = 0;
+    double speed = 0;
     do
     {
+        string s = destpath.c_str();
+        string s2;
+        char str[20];
+        sprintf(str, "%d", count); // integer to string
+        std::stringstream ss;
+        ss << str;
+        ss >> s2;
+        s += ".tmp." + s2;
+
+        ofstream myfile2(s.c_str(), ofstream::binary);
+        // cout << d_path << endl;
 
         char *buffer = new char[CSIZE];
+        time_t start, end;
+
+        start = time(NULL);
+
+        // usleep(100000); // test speed
         n = read(sock, buffer, CSIZE);
-        myfile.write(buffer, n);
+        speed+=(n/1024.0)/1024.0;
+        end = time(NULL);
+        double diff = difftime(end, start);
+        
+        m[s] = n;
+        count_n += n;
 
+        myfile2.write(buffer, n);
+
+        int barWidth = 70;
+
+        cout << "[";
+        int pos = barWidth * progress;
+        for (int i = 0; i < barWidth; ++i)
+        {
+            if (i < pos)
+                cout << "=";
+            else if (i == pos)
+                cout << ">";
+            else
+                cout << " ";
+        }
+     
+        cout << "] " <<speed << "\t(mb)/s ."<< int(progress * 100.0) << "% \r" ;
+        if(diff >=1)
+        speed =0;
+        cout.flush();
+        progress += (double)((n / size)); // for demonstration only
+        // if ((keepdownload <= (double)progress) || (!keepdownload))
+        // myfile.write(buffer, n);
+        // fprintf(pFile, "%f:%f:%f\n",  (double)progress,(double)(progress * 100.0),(double)((n / size)));
+        // if(keepdownload <=(double)progress )
+        // fprintf(pFile, "%f\n", (double)progress);
+        // fprintf(pFile, "%f\n",  (double)(progress * 100.0));
+        // cout << (double)((n / size)) << endl;
+        // sleep(1);
+        // cout << progress << endl;
+        count++;
+        myfile2.close();
     } while (n > 0);
+    string download_file_size = destpath.c_str();
+    download_file_size += "count";
+    m[download_file_size] = count;
+    cout << count_n << endl;
 
-    myfile.close();
+    // fclose(pFile);
 
+    /// merge bin
+
+    // ofstream outFile(d_path, ofstream::binary);
+
+    // if (outFile.fail())
+    // {
+    //     cerr << "Unable to open file for writing." << endl;
+    //     exit(1);
+    // }
+    // string s3 = destpath.c_str();
+    // s3 += ".tmp.0";
+    // char *buffer2 = new char[CSIZE];
+    // cout << s3.c_str();
+    // std::ifstream fin(s3.c_str(), ios_base::in | ifstream::binary);
+    // if (!fin.is_open())
+    // {
+    //     cout << "errror" << endl;
+    // }
+    // fin.read(buffer2, 64 * 1024);
+    // fin.close();
+    // cout << "merge binary" << endl;
+    // int count_b = 0;
+    // for (int i = 0; i < count; i++)
+    // {
+    //     // myfile.write(buffer2, n);
+    //     string s = destpath.c_str();
+    //     string s2;
+    //     char str[20];
+    //     sprintf(str, "%d", i); // integer to string
+    //     std::stringstream ss;
+    //     ss << str;
+    //     ss >> s2;
+    //     s += ".tmp." + s2;
+    //     std::ifstream fin(s.c_str(), ios_base::in | ifstream::binary);
+    //     // int length = fin.tellg();
+    //     // struct stat sb;
+    //     // if (stat(s.c_str(), &sb) == -1)
+    //     // {
+    //     //     cout << s.c_str() << endl;
+    //     //     cout << "FILE NOT FOUND" << endl;
+    //     //     // return "-1";
+    //     // }
+
+    //     // cout << sb.st_size << endl;
+    //     //  m.find(s->second);
+    //     char *buffer2 = new char[m.find(s)->second];
+
+    //     if (!fin.is_open())
+    //     {
+    //         cout << "errror" << endl;
+    //     }
+    //     fin.read(buffer2, m.find(s)->second);
+    //     fin.close();
+    //     count_b += m.find(s)->second;
+    //     // ofstream myfile2(s.c_str(), ofstream::binary);
+    //     myfile.write(buffer2, m.find(s)->second);
+    // }
+    // cout << count_b << endl;
+    // cout << count_n << endl;
+    // myfile.close();
+    // std::ofstream input(d_path + ".tmp.0", std::ios::binary);
+
+    // copies all data into buffer
+    // std::vector<unsigned char> buffer2(std::ostreambuf_iterator<char>(input), {});
+    // string s4 = destpath.c_str();
+    // s4 += ".new";
+    // cout << s4.c_str();
+    // ofstream outFile(s4.c_str(), ofstream::binary );
+    // if (outFile.fail())
+    // {
+    //     cerr << "Unable to open file for writing." << endl;
+    //     exit(1);
+    // }
+    // outFile.write(buffer2,  64 * 1024);
+    // outFile.close();
     return 1;
 }
 
@@ -109,19 +347,21 @@ void *getcommandExecution(void *complexstruct)
     string replydata = string(obj.replydata1);
     string destpath = string(obj.destpath1);
     string getcmdmtorrentpath = string(obj.getcmdmtorrentpath1);
-    //cout<<"Reply data : "<<replydata<<endl;
-    //cout<<"destpath : "<<destpath<<endl;
-    //cout<<"getcmdtorrentpath : "<<getcmdmtorrentpath<<endl;
+
+    // cout<<"Reply data : "<<replydata<<endl;
+    // cout<<"destpath : "<<destpath<<endl;
+    // cout<<"getcmdtorrentpath : "<<getcmdmtorrentpath<<endl;
     int sock = obj.sock1;
-    int ans = dofiletransfering(replydata, destpath);
+    // cout << getfilesize(getcmdmtorrentpath) << endl;
+    int ans = dofiletransfering(replydata, destpath, getcmdmtorrentpath);
     if (ans == 1)
     {
-        cout << "FILE SUCCESSFULLY DOWNLOADED" << endl;
         downloadstatus[destpath] = "S";
         vector<string> temptokens;
         temptokens.push_back("share");
         temptokens.push_back(destpath);
         temptokens.push_back(getcmdmtorrentpath);
+        merge_binary(destpath);
         string complexdata = executeshareclient(temptokens, clientsocketstr, trackersocket1str, trackersocket2str);
         if (complexdata != "-1")
         {
@@ -131,6 +371,8 @@ void *getcommandExecution(void *complexstruct)
             char buff[1024] = {0};
             read(sock, buff, 1024);
         }
+        // merge_binary(destpath);
+        cout << "FILE SUCCESSFULLY DOWNLOADED" << endl;
     }
     else
     {
@@ -190,21 +432,22 @@ void readallmtorrentfile(int sc)
 vector<string> stringProcessing(string command, char delimeter)
 {
     vector<string> temptokens;
-    string token="";
-    for(unsigned int i=0;i<command.length();i++)
+    string token = "";
+    for (unsigned int i = 0; i < command.length(); i++)
     {
-        char ch=command[i];
-        if(ch=='\\')
+        char ch = command[i];
+        if (ch == '\\')
         {
             i++;
             token += command[i];
         }
-        else if(ch==delimeter)
+        else if (ch == delimeter)
         {
             temptokens.push_back(token);
-            token="";
+            token = "";
         }
-        else{
+        else
+        {
             token += ch;
         }
     }
@@ -244,14 +487,14 @@ int main(int argc, char const *argv[])
         // cout<<"Tracker 1 socket: "<<trackersocket1.ip<<" : "<<trackersocket1.port<<endl;
         // cout<<"Tracker 2 socket: "<<trackersocket2.ip<<" : "<<trackersocket2.port<<endl;
 
-        //create new thread from client which act as seeder(server) to provide data to others
+        // create new thread from client which act as seeder(server) to provide data to others
         pthread_t cserverid;
         if (pthread_create(&cserverid, NULL, seederserverservice, (void *)&clientsocketstr) < 0)
         {
             perror("\ncould not create thread in client side\n");
         }
 
-        //socket programming on client side
+        // socket programming on client side
         int sock = 0;
         struct sockaddr_in serv_addr;
         if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -264,7 +507,7 @@ int main(int argc, char const *argv[])
         serv_addr.sin_family = AF_INET;
         serv_addr.sin_port = htons(trackersocket1.port);
 
-        //Convert IPv4 and IPv6 addresses from text to binary form
+        // Convert IPv4 and IPv6 addresses from text to binary form
         if (inet_pton(AF_INET, trackersocket1.ip, &serv_addr.sin_addr) <= 0)
         {
             printf("\nClient File  : Invalid address/ Address not supported \n");
@@ -279,7 +522,7 @@ int main(int argc, char const *argv[])
         writelog("******Connection stablished successfully with tracker!!!");
         readallmtorrentfile(sock);
 
-        //continuously listening to client for his entring command
+        // continuously listening to client for his entring command
         while (1)
         {
 
@@ -287,11 +530,11 @@ int main(int argc, char const *argv[])
             char *mtorrentfilepath;
             string strcmd, destpath, getcmdmtorrentpath;
 
-            //writelog("Enter the command : ");
+            // writelog("Enter the command : ");
             getline(cin >> ws, strcmd);
             writelog("Command from cient : " + strcmd);
 
-            vector<string> tokens=stringProcessing(strcmd,' ');
+            vector<string> tokens = stringProcessing(strcmd, ' ');
             string complexdata;
 
             // To handle which command enter by client
@@ -318,6 +561,7 @@ int main(int argc, char const *argv[])
                 complexdata = executegetclient(tokens);
                 destpath = tokens[2];
                 getcmdmtorrentpath = tokens[1];
+
                 if (complexdata == "-1")
                     continue;
                 else
@@ -369,14 +613,14 @@ int main(int argc, char const *argv[])
 
             char *clientreply = new char[complexdata.length() + 1];
             strcpy(clientreply, complexdata.c_str());
-            //cout<<"clientreply : "<<clientreply<<endl;
+            // cout<<"clientreply : "<<clientreply<<endl;
 
-            //to send client request to tracker
+            // to send client request to tracker
             send(sock, clientreply, strlen(clientreply), 0);
 
             writelog("client msg message sent to Tracker");
 
-            //to recieve tracker responce
+            // to recieve tracker responce
             char buffer[1024] = {0};
             read(sock, buffer, 1024);
             writelog("client(" + clientsocketstr + ")got reply from tracker ===> " + string(buffer));
@@ -386,7 +630,7 @@ int main(int argc, char const *argv[])
 
             string responce = string(buffer);
 
-            //when getting response of get command as list of  client socket having file
+            // when getting response of get command as list of  client socket having file
             if (getflag == 1)
             {
                 struct complexData obj1;
@@ -398,7 +642,7 @@ int main(int argc, char const *argv[])
                 strcpy(obj1.getcmdmtorrentpath1, getcmdmtorrentpath.c_str());
                 obj1.sock1 = sock;
 
-                //for non-blocking get command (create separate thread for downloading file)
+                // for non-blocking get command (create separate thread for downloading file)
                 pthread_t getclientid;
                 if (pthread_create(&getclientid, NULL, getcommandExecution, (void *)&obj1) < 0)
                 {
@@ -407,14 +651,14 @@ int main(int argc, char const *argv[])
             }
             getflag = 0;
 
-            //When Server Send Response for remove command
+            // When Server Send Response for remove command
             if (responce == "FILE SUCCESSFULLY REMOVED")
             {
                 if (remove(mtorrentfilepath) != 0)
                     perror("\nError deleting mtorrent file\n");
             }
 
-            //When Client is closed
+            // When Client is closed
             if (closeflag == 1)
             {
                 cout << "Thank You !!!" << endl;

@@ -15,7 +15,7 @@
 #include <openssl/sha.h>
 #include <pthread.h>
 #include <dirent.h>
-
+#include <string.h>
 using namespace std;
 
 extern const char *logpath;
@@ -24,6 +24,9 @@ extern const char *logpath;
 //mtorrent generator's functions
 string calHashofchunk(char *schunk,int length1,int shorthashflag);
 string getFileHash(char *fpath);
+int getfilesize(string tmp2);
+double getfileprocess(string tmp);
+int merge_binary(string destpath);
 string createTorrentFile(char *fpath, char *mtpath,string tcksocket1,string tcksocket2);
 
 //Client Commands

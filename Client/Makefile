@@ -1,8 +1,8 @@
 # RollNo : 2018201033  Name : Darshan Kansagara
 CC = g++
-CFLAGS = -Wall 
+CFLAGS = -Wall -g
 DEPS = clientheader.h 
-OBJ = log.o share.o get.o remove.o seeder.o mtorrentcreator.o client.o
+OBJ = log.o share.o get.o remove.o seeder.o mtorrentcreator.o client.o 
 %.o: %.cpp $(DEPS)
 	$(CC) $(CFLAGS) -c -o $@ $< -lssl -lcrypto -lpthread
 

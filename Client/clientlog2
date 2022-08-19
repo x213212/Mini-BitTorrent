@@ -1,0 +1,9 @@
+********new client started *********
+Client socket : 127.0.0.1:7600
+Tracker 1 socket : 127.0.0.1:5000
+Tracker 2 socket : 127.0.0.1:6000
+******Connection stablished successfully with tracker!!!
+read mtorrentfile sent to server & got response : SUCCESSFULLY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED

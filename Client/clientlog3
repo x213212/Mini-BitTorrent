@@ -1,0 +1,25 @@
+********new client started *********
+Client socket : 127.0.0.1:1234
+Tracker 1 socket : 127.0.0.1:5000
+Tracker 2 socket : 127.0.0.1:6000
+******Connection stablished successfully with tracker!!!
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+Command from cient : get ere_free_easeus.exe.mtorrent. /root/x21321219/Mini-BitTorrent/Client/test/ere_free_easeus.exe
+GET command exe in client side
+(GET cmd)Complex Data need to send to tracker :get#a113f7dc1c9e4bd6e0917d10b232f84eab0420f1
+client msg message sent to Tracker
+client(127.0.0.1:1234)got reply from tracker ===> 127.0.0.1:8800#/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe@127.0.0.1:7600#/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe@127.0.0.1:1234#/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
+dofiletransfering called : 127.0.0.1:8800#/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe@127.0.0.1:7600#/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe@127.0.0.1:1234#/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
+******Avialable seeders for downloading file*******
+127.0.0.1:8800--->/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
+127.0.0.1:7600--->/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
+127.0.0.1:1234--->/root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
+****************************************************
+******Connection  established for file transffered !!!
+Mtorrent creater called for filepath : /root/x21321219/Mini-BitTorrent/Client/test/ere_free_easeus.exe
+Mtorrent Succesfully created
+share cmd gets Long Hash : e7ffbdccd1b3b19fde203d1aebedb902b05cbd95dc83d6b9bb1f49e0af7caa34b9908a898f00de798df3387320432d2b58056871402a8a63efc2e849e481ac0bf8d4b2587e7d6a87bed81d0676e3a991f8cc7d66353797cb98c8a61f5bae0c3bb10e59d9b84a5c3431b93c209ef2fe53522fc0cb2d125270cc15d8625c2887ae19af26b2d58157b7eda09ee70f0f38cc77ba4b8f777bfcb730dfedd39f66987ab2f1def9298209115f400ce46627542d56cb53388d3a6393e12dd8efb054f811dba87ba291bc6e4287464144482f86004c39938875c0ed12e22d8778913b3e3e8318da8d82c9f0e3125570ef1d1aa51db649d2e85970a8d8e009faa58ee6ec33661c4e8f823df6e4af230813dc17a966bcc5543b174c0b6a043b3c26c70626c787669a31d55b41ac3f6a7c952ea7ae1f73cf8039b2ad3600bc3ced9b7a19e644295674b001e9365e94b352c34bad55e5f727a96a846bd3af3f811c122cc0f5076aab879a1671e3293d8a3c1922e47efece05075ac24422c1803217a25432c333118a802429977c6d301940a47a140386d8d65a37d53cbe8a2e27108e4da518981461d1bd7a23737a2b0f3853f651153b713339bbbfcde9b1444974cbdcd970ab822b716a71fc6c6a01dacf0f330e1110d8562cf234275b466eef1dcc68d99da5ea91988e1247447d1266fcb49e4c9eda6b72318087ecf9f3800719e05e5ff17882acffdb2d4b8b7901dfbbfdab12137f984ff895c867a766b8b358307c9fa54ca1245b83b12335e520b97b1ad85c3815e1a732704fcb8188cc173fea94448af593ef83e0c8143c82a7a3fcbf658c7357e1a34cfb1ce673adda9d7ef09aefea3d914ad5a709005fbf13ed4667164d2c9529c8c0bbb834d408508cdea04e072b51631186497cc219a83506c26f68cdded99f39cd837617ac82b0a4b15a685c38af01f0a0e7a881108cd21ac719f4571c05a892a28620a60a397abb357b2855f340bacda9459c1d76749d2245200c42a4e6fd04f608bb3365c22e2a780208c5c9d1be1715e619fb9e46cbcdd1d17e947087b0c3365a199cef0006f90d2cf7015c9479de48eeb2ac42b8ff7652a701c01d3a9c5f894740da514dcc4b041eedd174e03d4a4cdde772db53d2fb0397c3df97dc57b0f0525ddbfb5ef09f70a45c38a90e496eddd5d5a0b99aa152984e6cd3da3445921a9903ebc826113c0dfb2806d4f633a5ce036cec109589a78464fd1f5c867fa47c4ce629213fca05679205f120d09161c8a76395418f134eed1adcba264b12cfad066fa6ff8014e2a7b6ae490cf758f5d62b2d56cc5f8a958b42b56b35877fd09b1ddefb3b1fde8396bff0fe020dbfd7f2e458c397f284eb35d563278c5bf3e53f7802eca63fcfa574cab64c22c7f21a8380cde14fb1a80fc9a60d7ddcd5ce1fd2742f8ec03f60a382c3f78ff81bfae2cff05924cc3bf58cd6640dac71ef
+(SHARE cmd)Complex Data need to send to tracker :share#a113f7dc1c9e4bd6e0917d10b232f84eab0420f1#127.0.0.1:1234#/root/x21321219/Mini-BitTorrent/Client/test/ere_free_easeus.exe

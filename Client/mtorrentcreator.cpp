@@ -20,11 +20,11 @@ string calHashofchunk(char *schunk, int length1, int shorthashflag)
     char buf[SHA_DIGEST_LENGTH * 2];
     SHA1((unsigned char *)schunk, length1, hash);
 
-    //printf("\n*****hash ********");
+    // printf("\n*****hash ********");
     for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
         sprintf((char *)&(buf[i * 2]), "%02x", hash[i]);
 
-    //cout<<"hash : "<<buf<<endl;
+    // cout<<"hash : "<<buf<<endl;
     string ans;
     if (shorthashflag == 1)
     {
@@ -72,7 +72,7 @@ string getFileHash(char *fpath)
     {
         ++total_chunks; // add last chunk to count
     }
-    else //when file1 is completely divisible by chunk size
+    else // when file1 is completely divisible by chunk size
     {
         last_chunk_size = chunk_size;
     }
@@ -115,10 +115,133 @@ string createTorrentFile(char *fpath, char *mtpath, string tcksocket1, string tc
     myfile << tcksocket1 << endl;
     myfile << tcksocket2 << endl;
     myfile << string(fpath) << endl;
-    myfile << sb.st_size << endl;
+    myfile << "size:" << sb.st_size << endl;
     string flhash = getFileHash(fpath);
     myfile << flhash << endl;
     myfile.close();
     writelog("Mtorrent Succesfully created");
     return flhash;
+}
+char *strrpc(char *str, char *oldstr, char *newstr)
+{
+    char bstr[strlen(str)]; //轉換緩衝區
+    memset(bstr, 0, sizeof(bstr));
+
+    for (int i = 0; i < strlen(str); i++)
+    {
+        if (!strncmp(str + i, oldstr, strlen(oldstr)))
+        { //查詢目標字串
+            strcat(bstr, newstr);
+            i += strlen(oldstr) - 1;
+        }
+        else
+        {
+            strncat(bstr, str + i, 1); //儲存一位元組進緩衝區
+        }
+    }
+
+    strcpy(str, bstr);
+    return str;
+}
+int charToInt(char c)
+{
+    int num = 0;
+
+    // Substract '0' from entered char to get
+    // corresponding digit
+    num = c - '0';
+
+    return num;
+}
+int getfilesize(string tmp2)
+{
+    string tmp = "./";
+    tmp += tmp2;
+    int n = tmp.length();
+
+    // declaring character array
+    char filename[n + 1];
+
+    // copying the contents of the
+    // string to char array
+    strcpy(filename, tmp.c_str());
+    cout << tmp << endl;
+    // char filename[] = tmp; //文件名
+    FILE *fp;
+    char StrLine[1024];                      //每行最大读取的字符数
+    if ((fp = fopen(filename, "r")) == NULL) //判断文件是否存在及可读
+    {
+        printf("error!");
+        return -1;
+    }
+    // char str1[] = "abcd", str2[] = "abCd", str3[] = "size";
+    // int result;
+    char *pch;
+    char *pch2;
+    int chartonum;
+    while (!feof(fp))
+    {
+
+        fgets(StrLine, 1024, fp); //读取一行
+
+        // printf("%s\n", StrLine); //输出
+        pch = strstr(StrLine, "size:");
+        if (pch != NULL)
+        {
+
+            // printf("found: %s\n", pch);
+            strrpc(StrLine, "size:", "");
+            // printf("%s\n", StrLine); //输出
+            // char *pChar = &StrLine;
+            chartonum = atoi(StrLine);
+
+            // printf("%s\n", pch2);    //输出
+        }
+        else
+            continue;
+    }
+    fclose(fp); //关闭文件
+    return chartonum;
+}
+
+double getfileprocess(string tmp)
+{
+    char filename[] = "/root/x21321219/Mini-BitTorrent/Client/result.txt"; //文件名
+    FILE *fp;
+    char StrLine[1024];                      //每行最大读取的字符数
+    if ((fp = fopen(filename, "r")) == NULL) //判断文件是否存在及可读
+    {
+        printf("error!");
+        return -1;
+    }
+    // char str1[] = "abcd", str2[] = "abCd", str3[] = "size";
+    // int result;
+    char *pch;
+    char *pch2;
+    double chartonum = atof(StrLine);
+    while (!feof(fp))
+    {
+
+        fgets(StrLine, 1024, fp); //读取一行
+        chartonum = (chartonum >= atof(StrLine)) ? chartonum : atof(StrLine);
+        // printf("%s\n", StrLine); //输出
+        // pch = strstr(StrLine, "size:");
+        // if (pch != NULL)
+        // {
+
+        //     // printf("found: %s\n", pch);
+        //     strrpc(StrLine, "size:", "");
+        //     // printf("%s\n", StrLine); //输出
+        //     // char *pChar = &StrLine;
+        //     int chartonum =atoi(StrLine);
+        //     return chartonum;
+        //     // printf("%s\n", pch2);    //输出
+        // }
+        // else
+        //     continue;
+    }
+    // double chartonum = atof(StrLine);
+    printf("%s\n", StrLine); //输出
+    fclose(fp);              //关闭文件
+    return chartonum;
 }

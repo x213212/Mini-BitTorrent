@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/root/x21321219/Mini-BitTorrent'
+make: Leaving directory '/root/x21321219/Mini-BitTorrent'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+
