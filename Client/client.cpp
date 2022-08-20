@@ -4,8 +4,14 @@
 #include "clientheader.h"
 #include "socket.cpp"
 #include <fstream>
+
+#include <openssl/md5.h>
 #include <time.h>
-std::map<std::string, int> m;
+// using namespace std;
+// using namespace FastCRC;
+map<string, int> m;
+map<string, string> m2;
+
 struct complexData
 {
     char *replydata1, *destpath1, *getcmdmtorrentpath1;
@@ -22,12 +28,12 @@ vector<pair<string, string>> clientfilepath;
 //***************************************************************************
 // This function is act as leecher to download file from seeders
 //***************************************************************************
-int merge_binary(string destpath)
+int merge_binary(string destpath, string cmd5)
 {
     char *d_path = new char[destpath.length() + 20];
     strcpy(d_path, destpath.c_str());
     ofstream myfile(d_path, ofstream::binary);
-    cout << "merge binary" << endl;
+    cout << "====merge binary====" << endl;
     int count_b = 0;
     string download_file_size = destpath.c_str();
     download_file_size += "count";
@@ -56,11 +62,21 @@ int merge_binary(string destpath)
         myfile.write(buffer2, m.find(s)->second);
     }
     cout << count_b << endl;
-    // cout << count_n << endl;
+    cout << "====merge binary ok====" << endl;
+    cout << "=====md5 check======" << endl;
+    cout << cmd5<<endl;
+    // cout << cmd5<<endl;
+    cout <<getmd5(destpath) <<endl;
+    if (cmd5 == getmd5(destpath))
+        cout << "=====md5 check ok======" << endl;
+    else
+        cout << "=====md5 fail======" << endl;
     myfile.close();
 }
-int dofiletransfering(string replydata, string destpath, string filesize)
+
+int dofiletransfering(string replydata, string destpath, string filesize, string filemd5)
 {
+
     writelog("dofiletransfering called : " + replydata);
     stringstream check1(replydata);
     string intermediate;
@@ -75,7 +91,14 @@ int dofiletransfering(string replydata, string destpath, string filesize)
             clientsocketvc.push_back(subintermediate);
         }
         clientfilepath.push_back(pair<string, string>(clientsocketvc[0], clientsocketvc[1]));
+        // if(clientsocketvc[0]!= "")
+        // cout << clientsocketvc[0]<<endl;
+        // cout << clientsocketvc[2]<<endl;
+        m2[clientsocketvc[0]] = clientsocketvc[2];
+
+        // cout << clientsocketvc[2]<<endl;
     }
+    // cout <<"qweqwe"<<endl;
     writelog("******Avialable seeders for downloading file*******");
     for (unsigned int i = 0; i < clientfilepath.size(); i++)
     {
@@ -107,19 +130,15 @@ int dofiletransfering(string replydata, string destpath, string filesize)
     // printf(" hahah%s\n", token);
     for (unsigned int i = 0; i < clientfilepath.size(); i++)
     {
-        // char *pch;
-        size_t found = clientfilepath[i].second.find(last);
-        // if (found != string::npos)
-        // {
+        cout << "serach source..\n"
+             << clientfilepath[i].first << " md5:" << m2.find(clientfilepath[i].first)->second << endl;
+        // size_t found = clientfilepath[i].second.find(last);
 
-        // }
-
-        // pch = strstr(clientfilepath[i].second, last);。
-        if (found != string::npos)
+        if ((string)m2.find(clientfilepath[i].first)->second == filemd5)
         {
-            cout << "found at " << found << "\n";
             sock = 0;
-            cout << "socket : " << clientfilepath[i].first << endl;
+            // cout << "socket : " << clientfilepath[i].first << endl;
+            cout << "found same md5 source socket:" << clientfilepath[i].first << " md5:" << m2.find(clientfilepath[i].first)->second << "\n";
             csocket.setsocketdata((clientfilepath[i].first));
             filepath = clientfilepath[i].second;
             struct sockaddr_in serv_addr;
@@ -147,15 +166,25 @@ int dofiletransfering(string replydata, string destpath, string filesize)
                 printf("\nConnection Failed in Client\n");
                 continue;
             }
+            cout << "equal\n";
             break;
         }
         else
-
+        {
             continue;
+            cout << "not equal\n";
+        }
+
+        // if (found != string::npos)
+        // {
+
+        // }
+        // else
     }
     writelog("******Connection  established for file transffered !!!");
 
     ofstream myfile(d_path, ofstream::binary);
+
     cout << d_path << endl;
     // ofstream myfile2(d_path + "tmp", ofstream::binary);
 
@@ -165,7 +194,7 @@ int dofiletransfering(string replydata, string destpath, string filesize)
     send(sock, clientreply, strlen(clientreply), 0);
     int n;
     downloadstatus[destpath] = "D";
-    double keepdownload;
+    // double keepdownload;
     // keepdownload = getfileprocess("");
     // cout << getfileprocess("") << endl;
     // // cout << getfilesize(filesize) << endl;
@@ -192,6 +221,8 @@ int dofiletransfering(string replydata, string destpath, string filesize)
     int count = 0;
     int count_n = 0;
     double speed = 0;
+    time_t start, end;
+    start = time(NULL);
     do
     {
         string s = destpath.c_str();
@@ -203,24 +234,20 @@ int dofiletransfering(string replydata, string destpath, string filesize)
         ss >> s2;
         s += ".tmp." + s2;
 
-        ofstream myfile2(s.c_str(), ofstream::binary);
+        ofstream chunk(s.c_str(), ofstream::binary);
         // cout << d_path << endl;
 
         char *buffer = new char[CSIZE];
-        time_t start, end;
-
-        start = time(NULL);
-
         // usleep(100000); // test speed
         n = read(sock, buffer, CSIZE);
-        speed+=(n/1024.0)/1024.0;
+        speed += (n / 1024.0) / 1024.0;
         end = time(NULL);
         double diff = difftime(end, start);
-        
+
         m[s] = n;
         count_n += n;
 
-        myfile2.write(buffer, n);
+        chunk.write(buffer, n);
 
         int barWidth = 70;
 
@@ -235,10 +262,13 @@ int dofiletransfering(string replydata, string destpath, string filesize)
             else
                 cout << " ";
         }
-     
-        cout << "] " <<speed << "\t(mb)/s ."<< int(progress * 100.0) << "% \r" ;
-        if(diff >=1)
-        speed =0;
+
+        cout << "] " << speed << "\t(mb)/s ." << int(progress * 100.0) << "% \r";
+        if (diff >= 1)
+        {
+            start = end = speed = 0;
+            start = time(NULL);
+        }
         cout.flush();
         progress += (double)((n / size)); // for demonstration only
         // if ((keepdownload <= (double)progress) || (!keepdownload))
@@ -251,7 +281,7 @@ int dofiletransfering(string replydata, string destpath, string filesize)
         // sleep(1);
         // cout << progress << endl;
         count++;
-        myfile2.close();
+        chunk.close();
     } while (n > 0);
     string download_file_size = destpath.c_str();
     download_file_size += "count";
@@ -347,21 +377,28 @@ void *getcommandExecution(void *complexstruct)
     string replydata = string(obj.replydata1);
     string destpath = string(obj.destpath1);
     string getcmdmtorrentpath = string(obj.getcmdmtorrentpath1);
+    string cmd5 = getfilemd5(obj.getcmdmtorrentpath1);
 
+    // cout << getfilemd5(obj.getcmdmtorrentpath1)<<endl;
     // cout<<"Reply data : "<<replydata<<endl;
-    // cout<<"destpath : "<<destpath<<endl;
+    cout << "destpath : " << destpath << endl;
     // cout<<"getcmdtorrentpath : "<<getcmdmtorrentpath<<endl;
     int sock = obj.sock1;
     // cout << getfilesize(getcmdmtorrentpath) << endl;
-    int ans = dofiletransfering(replydata, destpath, getcmdmtorrentpath);
+    int ans = dofiletransfering(replydata, destpath, getcmdmtorrentpath, cmd5);
     if (ans == 1)
     {
         downloadstatus[destpath] = "S";
         vector<string> temptokens;
         temptokens.push_back("share");
         temptokens.push_back(destpath);
+        srand(time(NULL));
+        /* 產生亂數 */
+        int x = rand();
+
+        getcmdmtorrentpath += to_string(x);
         temptokens.push_back(getcmdmtorrentpath);
-        merge_binary(destpath);
+        merge_binary(destpath, cmd5);
         string complexdata = executeshareclient(temptokens, clientsocketstr, trackersocket1str, trackersocket2str);
         if (complexdata != "-1")
         {
@@ -416,7 +453,7 @@ void readallmtorrentfile(int sc)
                 char *longhash = new char[mtorrenthash.length() + 1];
                 strcpy(longhash, mtorrenthash.c_str());
                 string shorthash = calHashofchunk(longhash, mtorrenthash.length(), 0);
-                string ans = "share#" + shorthash + "#" + clientsocketstr + "#" + fpath;
+                string ans = "share#" + shorthash + "#" + clientsocketstr + "#" + fpath + "#" + getmd5(fpath);
                 char *clientrply = new char[ans.length() + 1];
                 strcpy(clientrply, ans.c_str());
                 send(sc, clientrply, strlen(clientrply), 0);

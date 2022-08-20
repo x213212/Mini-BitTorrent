@@ -115,6 +115,7 @@ string createTorrentFile(char *fpath, char *mtpath, string tcksocket1, string tc
     myfile << tcksocket1 << endl;
     myfile << tcksocket2 << endl;
     myfile << string(fpath) << endl;
+    myfile << "md5:" << getmd5(fpath) << endl;
     myfile << "size:" << sb.st_size << endl;
     string flhash = getFileHash(fpath);
     myfile << flhash << endl;
@@ -202,6 +203,60 @@ int getfilesize(string tmp2)
     }
     fclose(fp); //关闭文件
     return chartonum;
+}
+
+
+string getfilemd5(string tmp)
+{
+    // string tmp = "./";
+    // tmp += tmp2;
+    int n = tmp.length();
+
+    // declaring character array
+    char filename[n + 1];
+
+    // copying the contents of the
+    // string to char array
+    strcpy(filename, tmp.c_str());
+    cout << tmp << endl;
+    // char filename[] = tmp; //文件名
+    FILE *fp;
+    char StrLine[1024];                      //每行最大读取的字符数
+    if ((fp = fopen(filename, "r")) == NULL) //判断文件是否存在及可读
+    {
+        printf("get file md5 error!");
+        // return -1;
+    }
+    // char str1[] = "abcd", str2[] = "abCd", str3[] = "size";
+    // int result;
+    char *pch;
+    char *pch2;
+    string cmd5;
+    while (!feof(fp))
+    {
+
+        fgets(StrLine, 1024, fp); //读取一行
+
+        // printf("%s\n", StrLine); //输出
+        pch = strstr(StrLine, "md5:");
+        if (pch != NULL)
+        {
+
+            // printf("found: %s\n", pch);
+            strrpc(StrLine, "md5:", "");
+            strrpc(StrLine, "\n", "");
+            // printf("%s\n", StrLine); //输出
+            // char *pChar = &StrLine;
+            cmd5 = (StrLine);
+
+            // printf("%s\n", pch2);    //输出
+        }
+        else
+            continue;
+    }
+    fclose(fp); //关闭文件
+    
+    return cmd5;
 }
 
 double getfileprocess(string tmp)

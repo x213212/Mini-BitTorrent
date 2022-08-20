@@ -25,10 +25,11 @@ extern const char *logpath;
 string calHashofchunk(char *schunk,int length1,int shorthashflag);
 string getFileHash(char *fpath);
 int getfilesize(string tmp2);
+string getfilemd5(string tmp);
 double getfileprocess(string tmp);
-int merge_binary(string destpath);
+int merge_binary(string destpath,string cmd5);
+string getmd5(string filepath);
 string createTorrentFile(char *fpath, char *mtpath,string tcksocket1,string tcksocket2);
-
 //Client Commands
 string executeshareclient(vector <string> tokens,string clntsckstr,string trcksck1str,string trcksck2str);
 string executegetclient(vector <string> tokens);

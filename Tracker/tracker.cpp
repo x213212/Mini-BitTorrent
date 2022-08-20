@@ -14,7 +14,7 @@ char *seederfilep;
 map<string, vector<trackerdata>> trackertable;
 
 //**********************************************************************
-//Function that Writes into TrackerLog
+// Function that Writes into TrackerLog
 //**********************************************************************
 void writelog(string str)
 {
@@ -26,21 +26,22 @@ void writelog(string str)
 vector<string> stringProcessing(string command, char delimeter)
 {
     vector<string> temptokens;
-    string token="";
-    for(unsigned int i=0;i<command.length();i++)
+    string token = "";
+    for (unsigned int i = 0; i < command.length(); i++)
     {
-        char ch=command[i];
-        if(ch=='\\')
+        char ch = command[i];
+        if (ch == '\\')
         {
             i++;
             token += command[i];
         }
-        else if(ch==delimeter)
+        else if (ch == delimeter)
         {
             temptokens.push_back(token);
-            token="";
+            token = "";
         }
-        else{
+        else
+        {
             token += ch;
         }
     }
@@ -49,7 +50,7 @@ vector<string> stringProcessing(string command, char delimeter)
 }
 
 //**********************************************************************
-//It reads seederlist and make Data structure ready for tracker
+// It reads seederlist and make Data structure ready for tracker
 //**********************************************************************
 int readseederlist(char *fpath)
 {
@@ -66,15 +67,15 @@ int readseederlist(char *fpath)
     while (getline(fp, linecontent))
     {
         string data = string(linecontent);
-        vector<string> tokens1=stringProcessing(data,' ');
-        trackerdata td1(tokens1[0], tokens1[1], tokens1[2]);
+        vector<string> tokens1 = stringProcessing(data, ' ');
+        trackerdata td1(tokens1[0], tokens1[1], tokens1[2],tokens1[3]);
         trackertable[td1.shash].push_back(td1);
     }
     return 1;
 }
 
 //**********************************************************************
-//It writes into seederlist file
+// It writes into seederlist file
 //**********************************************************************
 int writeseederlist(char *fpath, string data)
 {
@@ -85,7 +86,7 @@ int writeseederlist(char *fpath, string data)
 }
 
 //**********************************************************************
-//It update seederlist on removing entry of client
+// It update seederlist on removing entry of client
 //**********************************************************************
 void updateseederlist(char *seederlistfp)
 {
@@ -97,8 +98,8 @@ void updateseederlist(char *seederlistfp)
         vector<trackerdata> temptd = it.second;
         for (unsigned int j = 0; j < temptd.size(); j++)
         {
-            string seederlistdata = temptd[j].shash + " " + temptd[j].csocket + " " + temptd[j].cfpath;
-            //cout<<seederlistdata<<endl;
+            string seederlistdata = temptd[j].shash + " " + temptd[j].csocket + " " + temptd[j].cfpath+ " " + temptd[j].cmd5;
+            // cout<<seederlistdata<<endl;
             filep << seederlistdata << endl;
         }
     }
@@ -106,7 +107,7 @@ void updateseederlist(char *seederlistfp)
 }
 
 //*********************************************************************************
-//It prints all record of tracker data Structure that maintain hash,socket,filepath
+// It prints all record of tracker data Structure that maintain hash,socket,filepath
 //*********************************************************************************
 void printeverything()
 {
@@ -125,7 +126,7 @@ void printeverything()
 }
 
 //**********************************************************************
-//This function handle server's get command exicution
+// This function handle server's get command exicution
 //**********************************************************************
 string executeget(vector<string> tokens1)
 {
@@ -137,12 +138,12 @@ string executeget(vector<string> tokens1)
         vector<trackerdata> temptd = trackertable[shash];
         for (i = 0; i < temptd.size() - 1; i++)
         {
-            ans += temptd[i].csocket + "#" + temptd[i].cfpath + "@";
+            ans += temptd[i].csocket + "#" + temptd[i].cfpath + "#" + temptd[i].cmd5 + "@";
         }
-        //cout<<"--->"<<ans<<endl;
-        ans += temptd[i].csocket + "#" + temptd[i].cfpath;
+        // cout<<"--->"<<ans<<endl;
+        ans += temptd[i].csocket + "#" + temptd[i].cfpath + "#" + temptd[i].cmd5;
 
-        //cout<<"--->"<<ans<<endl;
+        // cout<<"--->"<<ans<<endl;
     }
     else
     {
@@ -153,7 +154,7 @@ string executeget(vector<string> tokens1)
 }
 
 //**********************************************************************
-//This function handle client's remove command exicution
+// This function handle client's remove command exicution
 //**********************************************************************
 string executeremove(vector<string> tokens1, string data, char *seederlistfp)
 {
@@ -161,9 +162,9 @@ string executeremove(vector<string> tokens1, string data, char *seederlistfp)
     int flag = 0;
     int cflag = 0;
     string shash = tokens1[1];
-    //cout<<"---------->shash : "<<shash<<endl;
+    // cout<<"---------->shash : "<<shash<<endl;
     string clsocket = tokens1[2];
-    //cout<<"---------->csocket : "<<clsocket<<endl;
+    // cout<<"---------->csocket : "<<clsocket<<endl;
     if (trackertable.find(shash) != trackertable.end())
     {
         vector<trackerdata>::iterator it;
@@ -208,13 +209,14 @@ string executeremove(vector<string> tokens1, string data, char *seederlistfp)
 }
 
 //**********************************************************************
-//This function handle client's share command exicution
+// This function handle client's share command exicution
 //**********************************************************************
 string executeshare(vector<string> tokens1, string data, char *seederlistfp)
 {
     string ans;
-    string seederlistdata = tokens1[1] + " " + tokens1[2] + " " + tokens1[3];
-    trackerdata td(tokens1[1], tokens1[2], tokens1[3]);
+    // cout << tokens1[4] <<endl;
+    string seederlistdata = tokens1[1] + " " + tokens1[2] + " " + tokens1[3] + " " + tokens1[4];
+    trackerdata td(tokens1[1], tokens1[2], tokens1[3], tokens1[4]);
     // cout<<td.shash<<"::"<<td.csocket<<"::"<<td.cfpath<<endl;
     if (trackertable.find(td.shash) == trackertable.end())
     {
@@ -250,14 +252,14 @@ string executeshare(vector<string> tokens1, string data, char *seederlistfp)
 }
 
 //**********************************************************************
-//This function handle client's close command exicution
+// This function handle client's close command exicution
 //**********************************************************************
 string executeclose(vector<string> tokens1, char *seederlistfp)
 {
     string ans = "CLIENT CLOSED";
 
     string clientsocket = tokens1[1];
-    //cout<<"---------->client socket : "<<clientsocket<<endl;
+    // cout<<"---------->client socket : "<<clientsocket<<endl;
     map<string, vector<trackerdata>>::iterator mpit;
     for (mpit = trackertable.begin(); mpit != trackertable.end(); mpit++)
     {
@@ -303,7 +305,7 @@ string executeclose(vector<string> tokens1, char *seederlistfp)
 }
 
 //**********************************************************************
-//This function provides server service as which command
+// This function provides server service as which command
 // tracker got from client and perform action accordingly
 //**********************************************************************
 void *serverservice(void *socket_desc)
@@ -323,7 +325,7 @@ void *serverservice(void *socket_desc)
         string clientreplymsg;
 
         string data = string(buffer);
-        vector<string> tokens1=stringProcessing(data,'#');
+        vector<string> tokens1 = stringProcessing(data, '#');
         // stringstream check2(data);
         // string intermediate1;
         // // Tokenizing w.r.t. space '#'
@@ -360,10 +362,10 @@ void *serverservice(void *socket_desc)
 
         printeverything();
 
-        //cout<<"serverreply : "<<string(serverreply)<<endl;
+        // cout<<"serverreply : "<<string(serverreply)<<endl;
         char *serverreply = new char[clientreplymsg.length() + 1];
         strcpy(serverreply, clientreplymsg.c_str());
-        //cout<<"serverreply : "<<serverreply<<endl;
+        // cout<<"serverreply : "<<serverreply<<endl;
         send(new_socket, serverreply, strlen(serverreply), 0);
 
         writelog("Reply message sent from Tracker to client");
@@ -379,7 +381,7 @@ void *serverservice(void *socket_desc)
 }
 
 //************************************************************************************
-//This is main function of tracker for communication with client(socket programming)
+// This is main function of tracker for communication with client(socket programming)
 //************************************************************************************
 int main(int argc, char *argv[])
 {
@@ -452,9 +454,9 @@ int main(int argc, char *argv[])
                 perror("\ncould not create thread\n");
             }
 
-            //Now join the thread , so that we dont terminate before the thread
-            //pthread_join( thread_id , NULL);
-            // cout<<"New Client created assigned"<<endl;
+            // Now join the thread , so that we dont terminate before the thread
+            // pthread_join( thread_id , NULL);
+            //  cout<<"New Client created assigned"<<endl;
 
             // if (new_socket < 0)
             // {

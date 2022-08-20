@@ -7,5 +7,33 @@ read mtorrentfile sent to server & got response : FILE ALREADY SHARED
 read mtorrentfile sent to server & got response : FILE ALREADY SHARED
 read mtorrentfile sent to server & got response : FILE ALREADY SHARED
 read mtorrentfile sent to server & got response : FILE ALREADY SHARED
-******Connection accepted in seeder *******
-Seeder gets Data from Clients : /root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+read mtorrentfile sent to server & got response : FILE ALREADY SHARED
+Command from cient : get animation.gif.mtorrent. /root/x21321219/Mini-BitTorrent/Client/test/animation.gif
+GET command exe in client side
+(GET cmd)Complex Data need to send to tracker :get#9582294ce82410676fdfbcbe847f02066470adca
+client msg message sent to Tracker
+client(127.0.0.1:8800)got reply from tracker ===> 127.0.0.1:7600#/root/x21321219/Mini-BitTorrent/Client/animation.gif#3812b9b3aa879803647ebfd10ca8960f@127.0.0.1:8800#/root/x21321219/Mini-BitTorrent/Client/animation.gif#3812b9b3aa879803647ebfd10ca8960f
+dofiletransfering called : 127.0.0.1:7600#/root/x21321219/Mini-BitTorrent/Client/animation.gif#3812b9b3aa879803647ebfd10ca8960f@127.0.0.1:8800#/root/x21321219/Mini-BitTorrent/Client/animation.gif#3812b9b3aa879803647ebfd10ca8960f
+******Avialable seeders for downloading file*******
+127.0.0.1:7600--->/root/x21321219/Mini-BitTorrent/Client/animation.gif
+127.0.0.1:8800--->/root/x21321219/Mini-BitTorrent/Client/animation.gif
+****************************************************
+******Connection  established for file transffered !!!
+Mtorrent creater called for filepath : /root/x21321219/Mini-BitTorrent/Client/test/animation.gif
+Mtorrent Succesfully created
+share cmd gets Long Hash : beb3da505aab9fb7fef7
+(SHARE cmd)Complex Data need to send to tracker :share#1c35bbdf754f20ed38e7b6f5c7ad96e9827f3210#127.0.0.1:8800#/root/x21321219/Mini-BitTorrent/Client/test/animation.gif#3812b9b3aa879803647ebfd10ca8960f

@@ -1,15 +1,4 @@
-e92427a6752367cc1dafaddf8625f8be7823d18a 127.0.0.1:7600 /root/x21321219/Mini-BitTorrent/Client/20MB.zip
-e92427a6752367cc1dafaddf8625f8be7823d18a 127.0.0.1:1234 /root/x21321219/Mini-BitTorrent/Client/20MB.zip
-da39a3ee5e6b4b0d3255bfef95601890afd80709 127.0.0.1:1234 /root/x21321219/Mini-BitTorrent/Client/test/20MB.zip
-da39a3ee5e6b4b0d3255bfef95601890afd80709 127.0.0.1:8800 /root/x21321219/Mini-BitTorrent/Client/test/20MB.zip
-da39a3ee5e6b4b0d3255bfef95601890afd80709 127.0.0.1:7600 /root/x21321219/Mini-BitTorrent/Client/test/20MB.zip
-e92427a6752367cc1dafaddf8625f8be7823d18a 127.0.0.1:8800 /root/x21321219/Mini-BitTorrent/Client/20MB.zip
-4f2a2549b713c771d4e0634233f16fde92964e23 127.0.0.1:8800 /root/x21321219/Mini-BitTorrent/Client/test.c
-4f2a2549b713c771d4e0634233f16fde92964e23 127.0.0.1:7600 /root/x21321219/Mini-BitTorrent/Client/test.c
-4f2a2549b713c771d4e0634233f16fde92964e23 127.0.0.1:1234 /root/x21321219/Mini-BitTorrent/Client/test.c
-a113f7dc1c9e4bd6e0917d10b232f84eab0420f1 127.0.0.1:8800 /root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
-a113f7dc1c9e4bd6e0917d10b232f84eab0420f1 127.0.0.1:7600 /root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
-a113f7dc1c9e4bd6e0917d10b232f84eab0420f1 127.0.0.1:1234 /root/x21321219/Mini-BitTorrent/Client/ere_free_easeus.exe
-da76a594493e873fe9a58352e4ba5b21ee6a28b9 127.0.0.1:8800 /root/x21321219/Mini-BitTorrent/Client/1GB.zip
-da76a594493e873fe9a58352e4ba5b21ee6a28b9 127.0.0.1:1234 /root/x21321219/Mini-BitTorrent/Client/1GB.zip
-da76a594493e873fe9a58352e4ba5b21ee6a28b9 127.0.0.1:7600 /root/x21321219/Mini-BitTorrent/Client/test/1GB.zip
+1c35bbdf754f20ed38e7b6f5c7ad96e9827f3210 127.0.0.1:8800 /root/x21321219/Mini-BitTorrent/Client/animation.gif 3812b9b3aa879803647ebfd10ca8960f
+9582294ce82410676fdfbcbe847f02066470adca 127.0.0.1:7600 /root/x21321219/Mini-BitTorrent/Client/animation.gif 3812b9b3aa879803647ebfd10ca8960f
+1c35bbdf754f20ed38e7b6f5c7ad96e9827f3210 127.0.0.1:7600 /root/x21321219/Mini-BitTorrent/Client/animation.gif 3812b9b3aa879803647ebfd10ca8960f
+9582294ce82410676fdfbcbe847f02066470adca 127.0.0.1:8800 /root/x21321219/Mini-BitTorrent/Client/animation.gif 3812b9b3aa879803647ebfd10ca8960f

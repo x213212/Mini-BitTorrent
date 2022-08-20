@@ -4,6 +4,37 @@
 
 #include "clientheader.h"
 
+#include <openssl/md5.h>
+string getmd5(string filepath)
+{
+
+    string file_path = filepath;
+    ifstream fin(file_path.c_str(), ios::in | ios::binary);
+    if (fin.fail())
+    {
+        return "";
+    }
+    unsigned char md5[MD5_DIGEST_LENGTH];
+    MD5_CTX ctx;
+    MD5_Init(&ctx);
+    string line;
+    while (getline(fin, line))
+    {
+        MD5_Update(&ctx, line.c_str(), line.size());
+    }
+    MD5_Final(md5, &ctx);
+
+    string md5_hex;
+    const char map[] = "0123456789abcdef";
+    for (size_t i = 0; i < MD5_DIGEST_LENGTH; ++i)
+    {
+        // cout << int(md5[i]) << " ";
+        md5_hex += map[md5[i] / 16];
+        md5_hex += map[md5[i] % 16];
+    }
+    // cout <<md5_hex<<endl;
+    return md5_hex;
+}
 //***************************************************************************
 // This called mtorrent creator to create mtorrent file make appropiate
 // complex data that need to send to tracker for sharing of file
@@ -14,8 +45,10 @@ string executeshareclient(vector<string> tokens, string clntsckstr, string trcks
     string cmd = tokens[0];
     string fpath = tokens[1];
     string mtpath = tokens[2];
+
     cout << "Command  : " << cmd << endl;
     cout << "File path : " << fpath << endl;
+    cout << "File md5 :" << getmd5(fpath) << endl;
     cout << "Mtorrent path : " << mtpath << endl;
     // srand(time(NULL));
     /* 產生亂數 */
@@ -39,7 +72,7 @@ string executeshareclient(vector<string> tokens, string clntsckstr, string trcks
     strcpy(longhash, filehash.c_str());
     string shorthash = calHashofchunk(longhash, filehash.length(), 0);
 
-    string ans = cmd + "#" + shorthash + "#" + clntsckstr + "#" + fpath;
+    string ans = cmd + "#" + shorthash + "#" + clntsckstr + "#" + fpath + "#" + getmd5(fpath);
     writelog("(SHARE cmd)Complex Data need to send to tracker :" + ans);
     return ans;
 }
